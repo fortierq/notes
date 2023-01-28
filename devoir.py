@@ -1,20 +1,21 @@
 import pandas as pd
 from pathlib import Path
+import pickle
 
 class Devoir:
     def __init__(self, folder, file):
-        self.folder = folder
+        self.folder, self.bareme = folder, {}
         self.df = pd.read_excel(f"{folder}/{file}", sheet_name=None)
-        self.bareme = {}
 
         for ds in self.df:
-            if ds != "id":
-                df = self.df[ds]
-                self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "classe", "prenom"]).squeeze()
-                df = df.query("nom != 'bareme'")
-                df = pd.merge(self.df["id"], df, on=["nom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
-                df.statut.replace({"left_only": "absent", "right_only": "inconnu", "both": "présent"}, inplace=True)
-                self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
+            if ds == "id": continue
+            df = self.df[ds]
+            self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "classe", "prenom"]).squeeze()
+            df = df.query("nom != 'bareme'")
+            df = pd.merge(self.df["id"], df, on=["nom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
+            df.statut.replace({"left_only": "absent", "right_only": "inconnu", "both": "présent"}, inplace=True)
+            self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
+            self.df[ds].set_index("id", inplace=True)
 
     def mean(self, ds, moyennes, ecarts_type):
         df, b = self.df[ds], self.bareme[ds]
@@ -31,7 +32,14 @@ class Devoir:
     def anonymize(self):
         d = {}
         for ds in self.df:
+            if ds == "id": continue
             matiere, n = ds.split("_")
             if matiere not in d:
                 d[matiere] = {}
-            pd.concat([self.bareme[ds].to_frame().T, self.df[ds].drop(columns=["nom", "prenom", "brut"])]).to_csv(f"{self.folder}/{ds}.csv", index=False)
+            d[matiere][n] = {
+                "bareme": self.bareme[ds].astype(int),
+                "df": self.df[ds].drop(columns=["nom", "prenom", "brut"])
+            }
+        # to_csv(f"{self.folder}/{ds}.csv", index=False)
+        pickle.dump(d, open(f"{self.folder}/anonym.pkl", "wb"))
+        return d
