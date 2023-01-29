@@ -13,9 +13,13 @@ class Devoir:
             self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "classe", "prenom"]).squeeze()
             df = df.query("nom != 'bareme'")
             df = pd.merge(self.df["id"], df, on=["nom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
+            df.set_index("id", inplace=True)
             df.statut.replace({"left_only": "absent", "right_only": "inconnu", "both": "présent"}, inplace=True)
+            if "option" in ds:
+                print(df.query("statut != 'présent' and classe != 'pcc'")[["nom", "prenom", "classe", "statut"]])
+            else:
+                print(df.query("statut != 'présent'")[["nom", "prenom", "classe", "statut"]])
             self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
-            self.df[ds].set_index("id", inplace=True)
 
     def mean(self, ds, moyennes, ecarts_type):
         df, b = self.df[ds], self.bareme[ds]
