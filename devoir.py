@@ -41,5 +41,5 @@ class Devoir:
                 "bareme": self.bareme[ds].astype(int),
                 "df": self.df[ds].drop(columns=["nom", "prenom", "brut"])
             }
-        pickle.dump(d, open(f"{self.folder}/anonym.pkl", "wb"))
+        pickle.dump(d, open(f"{self.folder}/notes.pkl", "wb"))
         return d

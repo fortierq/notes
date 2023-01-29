@@ -1,12 +1,11 @@
 import pandas as pd
-pd.options.display.float_format = '{:,.1f}'.format
 import pickle
 import plotly.express as px
 import streamlit as st
 
 # https://plotly.streamlit.app/Bar_Charts
 st.set_page_config(layout="wide")
-d = pickle.load(open("22/anonym.pkl", "rb"))
+d = pickle.load(open("22/notes.pkl", "rb"))
 # st.sidebar.title("Notes d'informatique")
 
 plot = st.sidebar.radio("Affichage", ["Par question", "Par élève"])
