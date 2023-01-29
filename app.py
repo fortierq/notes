@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 d = pickle.load(open("22/anonym.pkl", "rb"))
 # st.sidebar.title("Notes d'informatique")
 
-plot = st.sidebar.selectbox("Affichage", ["Par question", "Par élève", "Par classe"])
+plot = st.sidebar.radio("Affichage", ["Par question", "Par élève"])
 
 matieres = {"Option informatique": "option", "Informatique commune": "itc"}
 matiere = st.sidebar.selectbox("Matière", matieres)
@@ -29,16 +29,23 @@ if plot == "Par question":
     df = pd.concat([bareme, dc[bareme.index].mean().round(1), dc.loc[id, bareme.index]], axis=1).T
     df.index = ["Barème", "Moyenne", "Élève"]
     # with tabs[0]:
-    st.write(df)
+    st.markdown("### Notes par question")
+    st.dataframe(df)
     st.caption("Chaque question est notée sur 6")
     # with tabs[1]:
     #     df = pd.concat([dc[bareme.index].mean(), dc.loc[id, bareme.index]], axis=1).T.fillna(0).astype(int)
     df = df.T.drop(columns=["Barème"]).reset_index().melt(id_vars="index")
     st.plotly_chart(px.bar(df, x="index", y="value", color="variable", barmode="group"), use_container_width=True)
-if plot == "Par classe":
+if plot == "Par élève":
 # with st.expander("Notes classe"):
-    tabs = st.tabs(["Histogramme", "Classement"])
-    with tabs[0]:
-        st.plotly_chart(px.histogram(dc, x="note", barmode="group", nbins=40, color="classe"), use_container_width=True)
-    with tabs[1]:
-        st.write(dc.sort_values("note", ascending=False))
+    # tabs = st.tabs(["Histogramme", "Classement"])
+    df_id = dc.loc[id, ["note", "rang"]]
+    dc_sort = dc.sort_values("note", ascending=False)
+    dc_sort["rang"] = dc_sort["rang"].round(1).astype(str)
+    i = dc_sort.index.get_loc(id)
+    colors = ["red"] * len(dc_sort["rang"])
+    colors[i] = "blue"
+    st.plotly_chart(px.bar(dc_sort, x="rang", color="rang", y="note", title="Classement", color_discrete_sequence=colors).update_layout(showlegend=False), use_container_width=True)
+    st.plotly_chart(px.histogram(dc, x="note", barmode="group", nbins=40, color="classe", title="Histogramme des notes", range_x=[0, 20]), use_container_width=True)
+    
+    

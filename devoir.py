@@ -28,6 +28,7 @@ class Devoir:
         classes = df["classe"].dropna()
         df["note"] = df_classe.loc[classes, "a"].values*df["brut"] + df_classe.loc[classes, "b"].values
         df["note"] = df["note"].round(1)
+        df["rang"] = df.groupby("classe")["note"].rank("first", ascending=False).astype(int)
     
     def anonymize(self):
         d = {}
@@ -40,6 +41,5 @@ class Devoir:
                 "bareme": self.bareme[ds].astype(int),
                 "df": self.df[ds].drop(columns=["nom", "prenom", "brut"])
             }
-        # to_csv(f"{self.folder}/{ds}.csv", index=False)
         pickle.dump(d, open(f"{self.folder}/anonym.pkl", "wb"))
         return d

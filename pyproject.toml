@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "project"
+version = "0.1.0"
+description = ""
+authors = ["Quentin Fortier <qpfortier@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.22.4"
+matplotlib = "^3.5.2"
+jupyter = "^1.0.0"
+pandas = "^1.4.2"
+streamlit = "^1.10.0"
+plotly = "^5.13.0"
+
+[tool.poetry.dev-dependencies]
+yapf = "^0.32.0"
+flake8 = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
