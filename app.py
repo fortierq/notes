@@ -20,7 +20,7 @@ ds, bareme = dm[ds]["df"], dm[ds]["bareme"]
 classe = st.sidebar.selectbox("Classe", ds["classe"].dropna().unique())
 dc = ds.query(f"classe == '{classe}'")
 
-id = st.sidebar.selectbox("Élève", dc.index)
+id = st.sidebar.selectbox("Élève", dc.index.sort_values())
 
 # with st.expander("Notes élève"):
 if plot == "Par question":
@@ -43,8 +43,8 @@ if plot == "Par élève":
     dc_sort = dc.sort_values("note", ascending=False)
     dc_sort["rang"] = dc_sort["rang"].round(1).astype(str)
     i = dc_sort.index.get_loc(id)
-    colors = ["red"] * len(dc_sort["rang"])
-    colors[i] = "blue"
+    colors = ["blue"] * len(dc_sort["rang"])
+    colors[i] = "red"
     st.plotly_chart(px.bar(dc_sort, x="rang", color="rang", y="note", title="Classement", color_discrete_sequence=colors).update_layout(showlegend=False), use_container_width=True)
     st.plotly_chart(px.histogram(dc, x="note", barmode="group", nbins=40, color="classe", title="Histogramme des notes", range_x=[0, 20]), use_container_width=True)
     
