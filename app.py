@@ -20,7 +20,7 @@ ds, bareme = dm[ds]["df"], dm[ds]["bareme"]
 classe = st.sidebar.selectbox("Classe", ds["classe"].dropna().unique())
 dc = ds.query(f"classe == '{classe}'")
 
-id = st.sidebar.selectbox("Élève", ds.index)
+id = st.sidebar.selectbox("Élève", dc.index)
 
 # with st.expander("Notes élève"):
 if plot == "Par question":
@@ -35,6 +35,7 @@ if plot == "Par question":
     #     df = pd.concat([dc[bareme.index].mean(), dc.loc[id, bareme.index]], axis=1).T.fillna(0).astype(int)
     df = df.T.drop(columns=["Barème"]).reset_index().melt(id_vars="index")
     st.plotly_chart(px.bar(df, x="index", y="value", color="variable", barmode="group"), use_container_width=True)
+
 if plot == "Par élève":
 # with st.expander("Notes classe"):
     # tabs = st.tabs(["Histogramme", "Classement"])
