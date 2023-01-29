@@ -32,7 +32,6 @@ with tabs[0]:
     df.index = ["Barème", "Moyenne", "Élève"]
     b = bareme.to_frame().T
     b.index = ["Barème"]
-    st.dataframe(b)
     # st.dataframe(df)
     # with tabs[1]:
     #     df = pd.concat([dc[bareme.index].mean(), dc.loc[id, bareme.index]], axis=1).T.fillna(0).astype(int)
@@ -40,6 +39,7 @@ with tabs[0]:
     df.index = df.index.astype(str)
     df = df.drop(columns=["Barème"]).reset_index().melt(id_vars="index")
     st.plotly_chart(px.bar(df, x="index", y="value", color="variable", barmode="group", labels={"index": "Question", "value": "Note (sur 6)"}), use_container_width=True)
+    st.dataframe(b)
 
 with tabs[1]:
     df_id = dc.loc[id, ["note", "rang"]]
@@ -51,6 +51,6 @@ with tabs[1]:
     st.plotly_chart(px.bar(dc_sort, x="rang", color="rang", y="note", color_discrete_sequence=colors).update_layout(showlegend=False), use_container_width=True)
 
 with tabs[2]:
-    st.plotly_chart(px.histogram(dc, x="note", barmode="group", nbins=40, color="classe", range_x=[0, 20]), use_container_width=True)
+    st.plotly_chart(px.histogram(dc, x="note", barmode="group", nbins=len(dc["note"].unique()), color="classe", range_x=[0, 20]), use_container_width=True)
     
     
