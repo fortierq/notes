@@ -42,6 +42,7 @@ with tabs[0]:
     df = df.T
     df.index = df.index.astype(str)
     df = df.drop(columns=["Barème"]).reset_index().melt(id_vars="index")
+    df["variable"] = df["variable"].str.replace("Élève", f"Élève {id}")
     st.plotly_chart(px.bar(df, x="index", y="value", color="variable", barmode="group", labels={"index": "Question", "value": "Note (sur 6)"}), use_container_width=True)
     st.dataframe(b)
 
