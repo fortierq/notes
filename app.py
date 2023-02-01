@@ -23,7 +23,7 @@ dc = df_ds.query(f"classe == '{classe}'")
 
 id = st.sidebar.selectbox("Élève", dc.index.sort_values())
 
-st.title(f"Notes du DS {ds} en {classe.upper()}")
+st.title(f"DS {ds} {matiere} en {classe.upper()}")
 
 st.markdown(f"Moyenne : {dc['note'].mean().round(1)}, écart-type : {dc['note'].std().round(1)}")
 
