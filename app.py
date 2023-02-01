@@ -15,13 +15,17 @@ matiere = st.sidebar.selectbox("Matière", matieres)
 dm = d[matieres[matiere]]
 
 ds = st.sidebar.selectbox("DS", dm.keys())
-ds, bareme = dm[ds]["df"], dm[ds]["bareme"]
-ds.index = ds.index.astype(str) 
+df_ds, bareme = dm[ds]["df"], dm[ds]["bareme"]
+df_ds.index = df_ds.index.astype(str) 
 
-classe = st.sidebar.selectbox("Classe", ds["classe"].dropna().unique())
-dc = ds.query(f"classe == '{classe}'")
+classe = st.sidebar.selectbox("Classe", df_ds["classe"].dropna().unique())
+dc = df_ds.query(f"classe == '{classe}'")
 
 id = st.sidebar.selectbox("Élève", dc.index.sort_values())
+
+st.title(f"Notes du DS {ds} en {classe.upper()}")
+
+st.markdown(f"Moyenne : {dc['note'].mean().round(1)}, écart-type : {dc['note'].std().round(1)}")
 
 # with st.expander("Notes élève"):
 # if plot == "Par question":
@@ -49,8 +53,5 @@ with tabs[1]:
     colors = ["blue"] * len(dc_sort["rang"])
     colors[i] = "red"
     st.plotly_chart(px.bar(dc_sort, x="rang", color="rang", y="note", color_discrete_sequence=colors).update_layout(showlegend=False), use_container_width=True)
-
 with tabs[2]:
-    st.plotly_chart(px.histogram(dc, x="note", barmode="group", nbins=len(dc["note"].unique()), color="classe", range_x=[0, 20]), use_container_width=True)
-    
-    
+    st.plotly_chart(px.histogram(dc, x="note", nbins=len(dc["note"].unique()), color="classe", range_x=[0, 20]), use_container_width=True)
