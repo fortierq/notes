@@ -15,10 +15,10 @@ class Devoir:
             df = pd.merge(self.df["id"], df, on=["nom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
             df.set_index("id", inplace=True)
             df.statut.replace({"left_only": "absent", "right_only": "inconnu", "both": "présent"}, inplace=True)
-            if "option" in ds:
-                print(df.query("statut != 'présent' and classe != 'pcc'")[["nom", "prenom", "classe", "statut"]])
-            else:
-                print(df.query("statut != 'présent'")[["nom", "prenom", "classe", "statut"]])
+            # if "option" in ds:
+            #     print(df.query("statut != 'présent' and classe != 'pcc'")[["nom", "prenom", "classe", "statut"]])
+            # else:
+            #     print(df.query("statut != 'présent'")[["nom", "prenom", "classe", "statut"]])
             self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
 
     def mean(self, ds, moyennes, ecarts_type):
@@ -38,7 +38,10 @@ class Devoir:
         d = {}
         for ds in self.df:
             if ds == "id": continue
-            matiere, n = ds.split("_")
+            print(ds)
+            matiere, n, *c = ds.split("_")
+            if len(c) > 0:
+                n = n + "_" + c[0]
             if matiere not in d:
                 d[matiere] = {}
             d[matiere][n] = {
