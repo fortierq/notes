@@ -30,9 +30,6 @@ with tabs[0]:
     df.index = ["Barème", "Moyenne", "Élève"]
     b = bareme.to_frame().T
     b.index = ["Barème"]
-    # st.dataframe(df)
-    # with tabs[1]:
-    #     df = pd.concat([dc[bareme.index].mean(), dc.loc[id, bareme.index]], axis=1).T.fillna(0).astype(int)
     df = df.T
     df.index = df.index.astype(str)
     df = df.drop(columns=["Barème"]).reset_index().melt(id_vars="index")
