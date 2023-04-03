@@ -3,12 +3,8 @@ import pickle
 import plotly.express as px
 import streamlit as st
 
-# https://plotly.streamlit.app/Bar_Charts
 st.set_page_config(layout="wide")
 d = pickle.load(open("22/notes.pkl", "rb"))
-# st.sidebar.title("Notes d'informatique")
-
-# plot = st.sidebar.radio("Affichage", ["Par question", "Par élève"])
 
 matieres = {"Option informatique": "option", "Informatique commune": "itc"}
 matiere = st.sidebar.selectbox("Matière", matieres)
@@ -27,8 +23,6 @@ st.title(f"DS {ds} {matiere} en {classe.upper()}")
 
 st.markdown(f"Moyenne : {dc['note'].mean().round(1)}, écart-type : {dc['note'].std().round(1)}")
 
-# with st.expander("Notes élève"):
-# if plot == "Par question":
 tabs = st.tabs(["Notes par question", "Classement", "Histogramme"])
 
 with tabs[0]:
@@ -54,5 +48,6 @@ with tabs[1]:
     colors = ["blue"] * len(dc_sort["rang"])
     colors[i] = "red"
     st.plotly_chart(px.bar(dc_sort, x="rang", color="rang", y="note", color_discrete_sequence=colors).update_layout(showlegend=False), use_container_width=True)
+
 with tabs[2]:
     st.plotly_chart(px.histogram(dc, x="note", nbins=len(dc["note"].unique()), color="classe", range_x=[0, 20]), use_container_width=True)
