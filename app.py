@@ -4,9 +4,9 @@ import plotly.express as px
 import streamlit as st
 
 st.set_page_config(layout="wide")
-d = pickle.load(open("22/notes.pkl", "rb"))
+d = pickle.load(open("23/notes.pkl", "rb"))
 
-matieres = {"Option informatique": "option", "Informatique commune": "itc"}
+matieres = {"Informatique commune": "itc", "Option informatique": "option"}
 matiere = st.sidebar.selectbox("Matière", matieres)
 dm = d[matieres[matiere]]
 

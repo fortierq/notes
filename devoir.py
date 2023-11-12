@@ -10,19 +10,21 @@ class Devoir:
         for ds in self.df:
             if ds == "id": continue
             df = self.df[ds]
-            self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "classe", "prenom"]).squeeze()
+            self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "classe"]).squeeze().astype(int)
             df = df.query("nom != 'bareme'")
             df = pd.merge(self.df["id"], df, on=["nom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
             df.set_index("id", inplace=True)
             df.statut.replace({"left_only": "absent", "right_only": "inconnu", "both": "présent"}, inplace=True)
             # if "option" in ds:
-            #     print(df.query("statut != 'présent' and classe != 'pcc'")[["nom", "prenom", "classe", "statut"]])
+            #     print(df.query("statut != 'présent' and classe != 'pcc'")[["nom", "classe", "statut"]])
             # else:
-            #     print(df.query("statut != 'présent'")[["nom", "prenom", "classe", "statut"]])
+            #     print(df.query("statut != 'présent'")[["nom", "classe", "statut"]])
             self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
 
     def mean(self, ds, moyennes, ecarts_type):
+        # print(self.df[ds])
         df, b = self.df[ds], self.bareme[ds]
+        print(self.bareme[ds])
         df["brut"] = (df[b.index]*b/6).sum(axis=1)
         df_classe = df[["classe", "brut"]].groupby("classe").agg(["mean", "std"])["brut"]
         df_classe["moyennes"] = moyennes
@@ -38,15 +40,18 @@ class Devoir:
         d = {}
         for ds in self.df:
             if ds == "id": continue
-            print(ds)
-            matiere, n, *c = ds.split("_")
-            if len(c) > 0:
-                n = n + "_" + c[0]
-            if matiere not in d:
-                d[matiere] = {}
-            d[matiere][n] = {
-                "bareme": self.bareme[ds].astype(int),
-                "df": self.df[ds].drop(columns=["nom", "prenom", "brut"])
-            }
+            try:
+                print(ds)
+                matiere, n, *c = ds.split("_")
+                if len(c) > 0:
+                    n = n + "_" + c[0]
+                if matiere not in d:
+                    d[matiere] = {}
+                d[matiere][n] = {
+                    "bareme": self.bareme[ds].astype(float),
+                    "df": self.df[ds].drop(columns=["nom", "brut"])
+                }
+            except:
+                print(f"Erreur: {ds}")
         pickle.dump(d, open(f"{self.folder}/notes.pkl", "wb"))
         return d
