@@ -24,7 +24,6 @@ class Devoir:
     def mean(self, ds, moyennes, ecarts_type):
         # print(self.df[ds])
         df, b = self.df[ds], self.bareme[ds]
-        print(self.bareme[ds])
         df["brut"] = (df[b.index]*b/6).sum(axis=1)
         df_classe = df[["classe", "brut"]].groupby("classe").agg(["mean", "std"])["brut"]
         df_classe["moyennes"] = moyennes
@@ -41,7 +40,7 @@ class Devoir:
         for ds in self.df:
             if ds == "id": continue
             try:
-                print(ds)
+                # print(ds)
                 matiere, n, *c = ds.split("_")
                 if len(c) > 0:
                     n = n + "_" + c[0]
