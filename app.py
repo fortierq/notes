@@ -25,18 +25,6 @@ st.markdown(f"Moyenne : {dc['note'].mean().round(1)}, écart-type : {dc['note'].
 
 tabs = st.tabs(["Notes par question", "Classement", "Histogramme"])
 
-with tabs[0]:
-    df = pd.concat([bareme, dc[bareme.index].mean().round(1), dc.loc[id, bareme.index]], axis=1).T
-    df.index = ["Barème", "Moyenne", "Élève"]
-    b = bareme.to_frame().T
-    b.index = ["Barème"]
-    df = df.T
-    df.index = df.index.astype(str)
-    df = df.drop(columns=["Barème"]).reset_index().melt(id_vars="index")
-    df["variable"] = df["variable"].str.replace("Élève", f"Élève {id}")
-    st.plotly_chart(px.bar(df, x="index", y="value", color="variable", barmode="group", labels={"index": "Question", "value": "Note (sur 9)"}), use_container_width=True)
-    st.dataframe(b)
-
 with tabs[1]:
     df_id = dc.loc[id, ["note", "rang"]]
     dc_sort = dc.sort_values("note", ascending=False)
@@ -48,3 +36,15 @@ with tabs[1]:
 
 with tabs[2]:
     st.plotly_chart(px.histogram(dc, x="note", nbins=len(dc["note"].unique()), color="classe", range_x=[0, 20]), use_container_width=True)
+
+with tabs[0]:
+    df = pd.concat([bareme, dc[bareme.index].mean().round(1), dc.loc[id, bareme.index]], axis=1).T
+    df.index = ["Barème", "Moyenne", "Élève"]
+    b = bareme.to_frame().T
+    b.index = ["Barème"]
+    df = df.T
+    df.index = df.index.astype(str)
+    df = df.drop(columns=["Barème"]).reset_index().melt(id_vars="index")
+    df["variable"] = df["variable"].str.replace("Élève", f"Élève {id}")
+    st.plotly_chart(px.bar(df, x="index", y="value", color="variable", barmode="group", labels={"index": "Question", "value": "Note (sur 9)"}), use_container_width=True)
+    st.dataframe(b)
