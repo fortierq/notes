@@ -23,9 +23,9 @@ st.title(f"DS {ds} {matiere} en {classe.upper()}")
 
 st.markdown(f"Moyenne : {dc['note'].mean().round(1)}, écart-type : {dc['note'].std().round(1)}")
 
-tabs = st.tabs(["Notes par question", "Classement", "Histogramme"])
+tabs = st.tabs(["Classement", "Histogramme", "Notes par question"])
 
-with tabs[1]:
+with tabs[0]:
     df_id = dc.loc[id, ["note", "rang"]]
     dc_sort = dc.sort_values("note", ascending=False)
     dc_sort["rang"] = dc_sort["rang"].round(1).astype(str)
@@ -34,10 +34,10 @@ with tabs[1]:
     colors[i] = "red"
     st.plotly_chart(px.bar(dc_sort, x="rang", color="rang", y="note", color_discrete_sequence=colors).update_layout(showlegend=False), use_container_width=True)
 
-with tabs[2]:
+with tabs[1]:
     st.plotly_chart(px.histogram(dc, x="note", nbins=len(dc["note"].unique()), color="classe", range_x=[0, 20]), use_container_width=True)
 
-with tabs[0]:
+with tabs[2]:
     df = pd.concat([bareme, dc[bareme.index].mean().round(1), dc.loc[id, bareme.index]], axis=1).T
     df.index = ["Barème", "Moyenne", "Élève"]
     b = bareme.to_frame().T
