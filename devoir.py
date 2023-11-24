@@ -36,7 +36,7 @@ class Devoir:
         classes = df["classe"].dropna()
         df["note"] = df_classe.loc[classes, "a"].values*df["brut"] + df_classe.loc[classes, "b"].values
         df["note"] = df["note"].round(1)
-        df["rang"] = df.groupby("classe")["note"].rank("first", ascending=False).astype(int)
+        df["rang"] = df.groupby("classe")["note"].rank("first", ascending=False).fillna(0).astype(int)
     
     def anonymize(self):
         d = {}
