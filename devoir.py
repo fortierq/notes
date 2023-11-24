@@ -9,18 +9,20 @@ class Devoir:
 
         for ds in self.df:
             if ds == "id": continue
-            if ds != "itc_1_mp": continue
-            df = self.df[ds]
-            self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "classe"]).squeeze().astype(int)
-            df = df.query("nom != 'bareme'")
-            df = pd.merge(self.df["id"], df, on=["nom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
-            df.set_index("id", inplace=True)
-            df.statut.replace({"left_only": "absent", "right_only": "inconnu", "both": "présent"}, inplace=True)
-            # if "option" in ds:
-            #     print(df.query("statut != 'présent' and classe != 'pcc'")[["nom", "classe", "statut"]])
-            # else:
-            #     print(df.query("statut != 'présent'")[["nom", "classe", "statut"]])
-            self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
+            try:
+                df = self.df[ds]
+                self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "classe"]).squeeze().astype(int)
+                df = df.query("nom != 'bareme'")
+                df = pd.merge(self.df["id"], df, on=["nom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
+                df.set_index("id", inplace=True)
+                df.statut.replace({"left_only": "absent", "right_only": "inconnu", "both": "présent"}, inplace=True)
+                # if "option" in ds:
+                #     print(df.query("statut != 'présent' and classe != 'pcc'")[["nom", "classe", "statut"]])
+                # else:
+                #     print(df.query("statut != 'présent'")[["nom", "classe", "statut"]])
+                self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
+            except:
+                print(f"Erreur: {ds}")
 
     def mean(self, ds, moyennes, ecarts_type):
         # print(self.df[ds])
@@ -44,7 +46,7 @@ class Devoir:
                 # print(ds)
                 matiere, n, *c = ds.split("_")
                 if len(c) > 0:
-                    n = n + "_" + c[0]
+                    n = f"{n} ({c[0]})"
                 if matiere not in d:
                     d[matiere] = {}
                 d[matiere][n] = {
