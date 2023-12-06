@@ -25,11 +25,11 @@ class Devoir:
                 print(f"Erreur: {ds}")
 
     def mean(self, ds, moyennes, ecarts_type):
-        # print(self.df[ds])
+        # print(self.df[ds].describe())
         df, b = self.df[ds], self.bareme[ds]
+        # print(ds)
+        # print(b)
         df["brut"] = (df[b.index]*b/9).sum(axis=1)
-        print(ds)
-        print(b)
         df_classe = df[["classe", "brut"]].groupby("classe").agg(["mean", "std"])["brut"]
         df_classe["moyennes"] = moyennes
         df_classe["ecarts_type"] = ecarts_type
