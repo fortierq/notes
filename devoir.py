@@ -21,8 +21,8 @@ class Devoir:
                 # else:
                 #     print(df.query("statut != 'présent'")[["nom", "classe", "statut"]])
                 self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
-            except:
-                print(f"Erreur: {ds}")
+            except Exception as e:
+                print(f"Erreur: {ds} {e}")
 
     def mean(self, ds, moyennes, ecarts_type):
         # print(self.df[ds].describe())
