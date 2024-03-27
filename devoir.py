@@ -22,15 +22,16 @@ class Devoir:
                 #     print(df.query("statut != 'présent'")[["nom", "classe", "statut"]])
                 self.df[ds] = df.query("statut == 'présent'").drop(columns=["statut"])
             except Exception as e:
-                print(f"Erreur: {ds} {e}")
+                print(f"Erreur init : {ds} {e}")
 
     def mean(self, ds, moyennes, ecarts_type):
-        # print(self.df[ds].describe())
+        # print(self.df[ds].dtypes)
         df, b = self.df[ds], self.bareme[ds]
         # print(ds)
         # print(b)
+        # print(df[b.index])
         df["brut"] = (df[b.index]*b/9).sum(axis=1)
-        df_classe = df[["classe", "brut"]].groupby("classe").agg(["mean", "std"])["brut"]
+        df_classe = df[["classe", "brut"]].query("brut > 0").groupby("classe").agg(["mean", "std"])["brut"]
         df_classe["moyennes"] = moyennes
         df_classe["ecarts_type"] = ecarts_type
         df_classe["a"] = df_classe["ecarts_type"]/df_classe["std"]
