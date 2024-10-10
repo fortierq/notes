@@ -11,10 +11,11 @@ class Devoir:
             if ds == "id": continue
             try:
                 df = self.df[ds]
-                self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "classe"]).squeeze().astype(int)
+                self.bareme[ds] = df.query("nom == 'bareme'").drop(columns=["nom", "prenom", "classe"]).squeeze().astype(int)
                 df = df.query("nom != 'bareme'")
-                df = pd.merge(self.df["id"], df, on=["nom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
+                df = pd.merge(self.df["id"], df, on=["nom", "prenom", "classe"], how="outer", indicator=True).rename(columns={"_merge": "statut"})
                 df.set_index("id", inplace=True)
+                df.index = df.index.astype(int)
                 df.statut.replace({"left_only": "absent", "right_only": "inconnu", "both": "présent"}, inplace=True)
                 # if "option" in ds:
                 #     print(df.query("statut != 'présent' and classe != 'pcc'")[["nom", "classe", "statut"]])
@@ -31,6 +32,7 @@ class Devoir:
         # print(b)
         # print(df[b.index])
         df["brut"] = (df[b.index]*b/9).sum(axis=1)
+        # df_classe = df[["classe", "brut"]].query("brut > 0").groupby("classe").agg(["mean", "std"])["brut"]
         df_classe = df[["classe", "brut"]].query("brut > 0").groupby("classe").agg(["mean", "std"])["brut"]
         df_classe["moyennes"] = moyennes
         df_classe["ecarts_type"] = ecarts_type
@@ -56,7 +58,7 @@ class Devoir:
                     "bareme": self.bareme[ds].astype(float),
                     "df": self.df[ds].drop(columns=["nom", "brut"])
                 }
-            except:
-                print(f"Erreur: {ds}")
+            except Exception as e:
+                print(f"Erreur: {ds} {e}")
         pickle.dump(d, open(f"{self.folder}/notes.pkl", "wb"))
         return d

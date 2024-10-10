@@ -4,22 +4,23 @@ import plotly.express as px
 import streamlit as st
 
 st.set_page_config(layout="wide")
-d = pickle.load(open("23/notes.pkl", "rb"))
+d = pickle.load(open("24/notes.pkl", "rb"))
 
-matieres = {"Informatique commune": "itc", "Option informatique": "option"}
-matiere = st.sidebar.selectbox("Matière", matieres)
-dm = d[matieres[matiere]]
+# matieres = {"Informatique commune": "itc", "Option informatique": "option"}
+# matiere = st.sidebar.selectbox("Matière", matieres)
+# dm = d[matieres[matiere]]
+dm = d["ds"]
 
 ds = st.sidebar.selectbox("DS", dm.keys())
 df_ds, bareme = dm[ds]["df"], dm[ds]["bareme"]
-df_ds.index = df_ds.index.astype(str) 
+df_ds.index = df_ds.index.astype("int") 
 
 classe = st.sidebar.selectbox("Classe", df_ds["classe"].dropna().unique())
 dc = df_ds.query(f"classe == '{classe}'")
 
-id = st.sidebar.selectbox("Élève", dc.index.sort_values())
+id = st.sidebar.selectbox("Identifiant", dc.index.astype("int").sort_values())
 
-st.title(f"DS {ds} {matiere} en {classe.upper()}")
+st.title(f"DS {ds} en {classe.upper()}")
 
 st.markdown(f"Moyenne : {dc['note'].mean().round(1)}, écart-type : {dc['note'].std().round(1)}")
 
