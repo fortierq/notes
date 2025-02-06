@@ -1,4 +1,5 @@
 [tool.poetry]
+package-mode = false
 name = "project"
 version = "0.1.0"
 description = ""
@@ -13,6 +14,7 @@ jupyter = "^1.0.0"
 pandas = "^1.4.2"
 streamlit = "^1.10.0"
 plotly = "^5.13.0"
+pyzmq = "<26.0.0"
 
 [tool.poetry.group.dev.dependencies]
 yapf = "^0.32.0"
