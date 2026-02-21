@@ -1,2 +1,2 @@
-*.pyc
-test.ipynb
+*.xlsx
+__pycache__/
