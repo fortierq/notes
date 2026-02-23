@@ -7,10 +7,10 @@ authors = ["Quentin Fortier <qpfortier@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.14"
 numpy = "^1.22.4"
 matplotlib = "^3.5.2"
-pandas = "1.5.3"
+pandas = ">=2.2.0,<3.0.0"
 streamlit = "^1.10.0"
 plotly = "^5.13.0"
 

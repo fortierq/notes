@@ -3,8 +3,21 @@ import pickle
 import plotly.express as px
 import streamlit as st
 
+
+class PandasCompatUnpickler(pickle.Unpickler):
+
+    def find_class(self, module, name):
+        if module == "pandas.core.indexes.numeric":
+            return pd.Index
+        return super().find_class(module, name)
+
+
+def load_pickle_compat(path):
+    with open(path, "rb") as file:
+        return PandasCompatUnpickler(file).load()
+
 st.set_page_config(layout="wide")
-d = pickle.load(open("25/notes.pkl", "rb"))
+d = load_pickle_compat("25/notes.pkl")
 
 # matieres = {"Informatique commune": "itc", "Option informatique": "option"}
 # matiere = st.sidebar.selectbox("Matière", matieres)
